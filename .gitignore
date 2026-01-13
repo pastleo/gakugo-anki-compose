@@ -2,3 +2,4 @@
 compose.yml
 anki_data
 gakugo_data
+ollama_proxy_data

@@ -1,0 +1,47 @@
+services:
+  gakugo:
+    # https://github.com/pastleo/gakugo/pkgs/container/gakugo
+    image: ghcr.io/pastleo/gakugo:main-xxxxxxx
+    restart: always
+    ports:
+      - "4000:4000"
+    environment:
+      DATABASE_PATH: /app/data/gakugo.db
+      ANKI_COLLECTION_PATH: /app/data/anki/collection.anki2
+      ANKI_SYNC_ENDPOINT: http://anki-sync-server:8080/
+      OLLAMA_BASE_URL: http://ollama-proxy:11434
+    env_file: ./.env
+    volumes:
+      - ./gakugo_data:/app/data
+
+  anki-sync-server:
+    image: docker.io/jeankhawand/anki-sync-server:25.07
+    restart: always
+    ports:
+      - "8080:8080"
+    environment:
+      PASSWORDS_HASHED: 1
+    env_file: ./.env
+    volumes:
+      - ./anki_data:/root
+      - ./anki_data:/anki_data
+
+  ollama-proxy:
+    image: alpine:3
+    restart: always
+    network_mode: host
+    command:
+      - sh
+      - -c
+      - |
+        apk add --no-cache autossh openssh-client &&
+        autossh -M 0 -N \
+          -o StrictHostKeyChecking=accept-new \
+          -o ServerAliveInterval=30 \
+          -o ServerAliveCountMax=3 \
+          -i /root/.ssh/id_rsa \
+          -L 0.0.0.0:11434:localhost:11434 \
+          $${SSH_USER}@$${SSH_HOST} -p $${SSH_PORT:-22}
+    env_file: ./.env
+    volumes:
+      - ./ollama_proxy_data/ssh:/root/.ssh:ro
