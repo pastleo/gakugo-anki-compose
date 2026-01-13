@@ -7,7 +7,7 @@ services:
       - "4000:4000"
     environment:
       DATABASE_PATH: /app/data/gakugo.db
-      ANKI_COLLECTION_PATH: /app/data/anki/collection.anki2
+      ANKI_COLLECTION_PATH: /app/data/collection.anki2
       ANKI_SYNC_ENDPOINT: http://anki-sync-server:8080/
       OLLAMA_BASE_URL: http://ollama-proxy:11434
     env_file: ./.env
