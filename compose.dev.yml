@@ -1,0 +1,12 @@
+services:
+  anki-sync-server:
+    image: docker.io/jeankhawand/anki-sync-server:25.07
+    ports:
+      - "8080:8080"
+    environment:
+      # username/email: dev, password: asdfasdf
+      SYNC_USER1: 'dev:$$pbkdf2-sha256$$i=600000,l=32$$4OQsNWc2Bb43Xiy1CxEMrA$$aOG3LIKcWJwHRoivmR+YI+ocf8WE7kYzqjDpkQuT51g'
+      PASSWORDS_HASHED: 1
+    volumes:
+      - ./anki_data/dev:/root
+      - ./anki_data/dev:/anki_data
