@@ -29,7 +29,6 @@ services:
   ollama-proxy:
     image: alpine:3
     restart: always
-    network_mode: host
     command:
       - sh
       - -c
@@ -45,3 +44,23 @@ services:
     env_file: ./.env
     volumes:
       - ./ollama_proxy_data/ssh:/root/.ssh:ro
+
+  # oauth2-proxy:
+  #   image: quay.io/oauth2-proxy/oauth2-proxy
+  #   container_name: gakugo_oauth2_proxy
+  #   environment:
+  #     OAUTH2_PROXY_HTTP_ADDRESS: http://:4180
+  #     OAUTH2_PROXY_UPSTREAMS: http://gakugo:4000
+  #     OAUTH2_PROXY_AUTHENTICATED_EMAILS_FILE: /allowed/emails
+  #   env_file: .env
+  #   ports:
+  #     - "xxxx:4180"
+  #   volumes:
+  #     - path/to/allowed:/allowed
+  #   restart: always
+
+networks:
+  default:
+    driver: bridge
+    driver_opts:
+      mtu: 1280 # to prevent ssh issue
